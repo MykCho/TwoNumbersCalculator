@@ -17,29 +17,69 @@ namespace TwoNumbersCalculator
             Console.WriteLine($"{borderLine}");
         }
 
+        static string CleanupString( string stringToClean )
+        {
+            char[] allowedCharacters = ['+', '-', '*', '/', '^', '!', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'];
+                       
+            for (int i = 0; i < stringToClean.Length; i++) //removing garbage
+            {
+                
+                if (!allowedCharacters.Contains(stringToClean[i]))
+                {
+                    stringToClean = stringToClean.Remove(i--, 1); //removing symbol and rewinding back one symbol to compensate
+
+                    Console.Write("\r" + stringToClean + " ");
+                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(0.2));
+
+                }
+            }
+            Console.WriteLine("\n");
+            return stringToClean;
+        }
+
+        static string[] SplitString(string stringToSplit, out char operationSymbol)
+        {
+            char[] allowedOperations = ['+', '-', '*', '/', '^', '!'];
+            int minusCount = 0;
+            int operationIndex = 0;
+
+            for (int i = 0;i < stringToSplit.Length; i++)
+            {
+                if (i == 0 && stringToSplit[i] == '-') { 
+                    minusCount++;
+                    continue;
+                }
+                
+                if (allowedOperations.Contains(stringToSplit[i])) {
+                    operationIndex = i;
+                    break;
+                }
+
+            }
+            operationSymbol = stringToSplit[operationIndex];
+            return stringToSplit.Split(stringToSplit[operationIndex]);
+        }
+
         static void Main(string[] args)
         {
-            char[] allowedCharacters = ['+', '-', '*', '/', '^', '!', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']; //not sure if needed
-            char[] allowedOperations = ['+', '-', '*', '/', '^', '!'];
+       
             string inputString = "";
-            
-            
+            string[] stringsArray;
+                                    
             ShowInitialMenu();
             inputString = Console.ReadLine();
 
             if (inputString != "") {
-
-                for (int i = 0; i < inputString.Length; i++) //removing garbage
+                inputString = CleanupString(inputString);
+                stringsArray = SplitString(inputString, out char operationSymbol);
+                Console.WriteLine($"ArrayLength: {stringsArray.Length}");
+                for (int i = 0; i<stringsArray.Length && i<2; i++)
                 {
-                    if (!allowedCharacters.Contains(inputString[i])) {
-                        inputString = inputString.Remove(i--,1);
-                        
-                        Console.Write("\r"+inputString+" ");
-                        System.Threading.Thread.Sleep(TimeSpan.FromSeconds(0.2));
-
-                    }
+                    Console.WriteLine($"string[{i}]{stringsArray[i]}");
+                    
                 }
-                Console.WriteLine("\n");
+                Console.WriteLine($"Operation: {operationSymbol}");
+                //now check if each string is a number and call calculate functions
             } else { Console.WriteLine("You entered an empty string"); }
         }   
     }
