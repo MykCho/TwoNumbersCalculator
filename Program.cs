@@ -8,11 +8,13 @@ namespace TwoNumbersCalculator
         {
             string borderLine = new String('-', Console.WindowWidth); //string of repeating symbols, WindowWidth times
             Console.WriteLine($"{borderLine}");
-            Console.WriteLine("This console app should (hopefully) calculate an expression on two numbers");
+            Console.WriteLine("This console app should (hopefully) calculate a simple mathematical expression");
             Console.WriteLine("Please input an expression in following format:");
             Console.WriteLine("<number1> <operation> <number2>");
             Console.WriteLine("Allowed operations: + - * / ^ !");
-            Console.WriteLine("note: factorial is a one-number operation, f.e. 123!)");
+            Console.WriteLine("note: factorial is a one-number operation, f.e. 12!)");
+            Console.WriteLine("press \"CTRL+C\" to exit");
+
             Console.WriteLine($"{borderLine}");
         }
 
@@ -70,11 +72,68 @@ namespace TwoNumbersCalculator
             return splitStringArray;
         }
 
-        static double Calculate(double a, double b, char operationSymbol) {
-            double result = 0;
-            Console.WriteLine("Right now I'm just a stub");
-            Console.WriteLine($"num1={a}, num2={b}, operation={operationSymbol}");
-        
+        static string Calculate(double a, double b, char operationSymbol) {
+            string result = "";
+            long fact;
+            //Console.WriteLine("Right now I'm just a stub");
+            //Console.WriteLine($"num1={a}, num2={b}, operation={operationSymbol}");
+            
+            switch (operationSymbol)
+            {
+                case '-':
+                    result = (a-b).ToString();
+                    break;
+
+                case '+':
+                    result = (a+b).ToString();
+                    break;
+
+                case '*':
+                    result = (a*b).ToString();
+                    break;
+                
+                case '/':
+                    
+                    if (b == 0) 
+                    {
+                        result = "[error]: division by zero";
+                        break;                    
+                    }
+                    result = (a/b).ToString();
+                    break;
+                
+                case '!':
+                    if (a == 0)
+                    {
+                        result = 1.ToString();
+                        break;
+                    }
+
+                    if (a < 0 || a != ((long)a))
+                    {
+                        result = "[error]: factorial is possible only for non-negative integers";
+                        break;
+                    }
+
+                    if (a > 20)
+                    {
+                        result = "[error]: out of range";
+                        break;
+                    }
+
+                    fact = 1;
+                    for (int i = ((int)a); i >0; i--) 
+                    {
+                        fact = fact * i;
+                    }
+                    result = fact.ToString();
+                    break;
+
+                default:
+                    result = "default result";
+                    break;  
+            }
+
             return result;
         }
         
@@ -86,35 +145,37 @@ namespace TwoNumbersCalculator
             string[] stringsArray;
             double num1, num2;
             
-            
-            ShowInitialMenu();
-            inputString = Console.ReadLine();
-            inputString = CleanupString(inputString);
-            
-            if (inputString != "") {
+           ShowInitialMenu();
                 
-                stringsArray = SplitString(inputString, out char operationSymbol);
+            do {
+                inputString = Console.ReadLine();
+                inputString = CleanupString(inputString);
 
-                //for (int i = 0; i<stringsArray.Length; i++) //diagnostic output
-                //{
-                //    Console.WriteLine($"string[{i}]: {stringsArray[i]}");
-                    
-                //}
-                //Console.WriteLine($"Operation: {operationSymbol}");
-
-                //now check if each string is a number and call calculate functions
-                if (!Double.TryParse(stringsArray[0], out num1) || !(Double.TryParse(stringsArray[1], out num2)))
+                if (inputString != "")
                 {
-                    Console.WriteLine("You did not enter the one of the numbers properly, or, god forbid, even both");
-                }
-                else {
-                    //Console.WriteLine($"number1={num1}");
-                    //Console.WriteLine($"number2={num2}");
-                    Calculate(num1, num2, operationSymbol);
-                }
 
+                    stringsArray = SplitString(inputString, out char operationSymbol);
 
-            } else { Console.WriteLine("You entered an empty string"); }
+                    //for (int i = 0; i<stringsArray.Length; i++) //diagnostic output
+                    //{
+                    //    Console.WriteLine($"string[{i}]: {stringsArray[i]}");
+
+                    //}
+                    //Console.WriteLine($"Operation: {operationSymbol}");
+
+                    //now check if each string is a number and call calculate functions
+                    if (!Double.TryParse(stringsArray[0], out num1) || !(Double.TryParse(stringsArray[1], out num2)))
+                    {
+                        Console.WriteLine("You did not enter the one of the numbers properly, or, god forbid, even both");
+                    }
+                    else
+                    {
+                        //Console.WriteLine($"number1={num1}");
+                        //Console.WriteLine($"number2={num2}");
+                        Console.WriteLine($"Result is: {Calculate(num1, num2, operationSymbol)}");
+                    }
+                } else { Console.WriteLine("You entered an empty string"); }
+            } while (true);
         }   
     }
 }
