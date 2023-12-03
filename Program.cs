@@ -16,23 +16,26 @@ namespace TwoNumbersCalculator
             Console.WriteLine($"{borderLine}");
         }
 
-        static string CleanupString( string stringToClean )
+        static string CleanupString(string stringToClean)
         {
+            string initialString = stringToClean; //to not output unnecessary \n
             char[] allowedCharacters = ['+', '-', '*', '/', '^', '!', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ','];
-                       
+
             for (int i = 0; i < stringToClean.Length; i++) //removing garbage
             {
-                
+
                 if (!allowedCharacters.Contains(stringToClean[i]))
                 {
                     stringToClean = stringToClean.Remove(i--, 1); //removing symbol and rewinding back one symbol to compensate
 
                     Console.Write("\r" + stringToClean + " ");
-                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(0.2));
+                    System.Threading.Thread.Sleep(TimeSpan.FromSeconds(0.1));
 
                 }
             }
-            Console.WriteLine("\n");
+            if (initialString != stringToClean) {
+                Console.WriteLine("\n");
+            }
             return stringToClean;
         }
 
@@ -67,6 +70,14 @@ namespace TwoNumbersCalculator
             return splitStringArray;
         }
 
+        static double Calculate(double a, double b, char operationSymbol) {
+            double result = 0;
+            Console.WriteLine("Right now I'm just a stub");
+            Console.WriteLine($"num1={a}, num2={b}, operation={operationSymbol}");
+        
+            return result;
+        }
+        
         //here goes main stuff-------------------------------------------------------------------------------------------
         static void Main(string[] args)
         {
@@ -84,16 +95,23 @@ namespace TwoNumbersCalculator
                 
                 stringsArray = SplitString(inputString, out char operationSymbol);
 
-                for (int i = 0; i<stringsArray.Length; i++)
-                {
-                    Console.WriteLine($"string[{i}]: {stringsArray[i]}");
+                //for (int i = 0; i<stringsArray.Length; i++) //diagnostic output
+                //{
+                //    Console.WriteLine($"string[{i}]: {stringsArray[i]}");
                     
-                }
-                Console.WriteLine($"Operation: {operationSymbol}");
-                
+                //}
+                //Console.WriteLine($"Operation: {operationSymbol}");
+
                 //now check if each string is a number and call calculate functions
-                if (Double.TryParse(stringsArray[0], out num1) ) { Console.WriteLine($"number1={num1}"); }
-                if (Double.TryParse(stringsArray[1], out num2)) { Console.WriteLine($"number2={num2}"); }
+                if (!Double.TryParse(stringsArray[0], out num1) || !(Double.TryParse(stringsArray[1], out num2)))
+                {
+                    Console.WriteLine("You did not enter the one of the numbers properly, or, god forbid, even both");
+                }
+                else {
+                    //Console.WriteLine($"number1={num1}");
+                    //Console.WriteLine($"number2={num2}");
+                    Calculate(num1, num2, operationSymbol);
+                }
 
 
             } else { Console.WriteLine("You entered an empty string"); }
