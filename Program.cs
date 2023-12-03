@@ -11,7 +11,6 @@ namespace TwoNumbersCalculator
             Console.WriteLine("This console app should (hopefully) calculate an expression on two numbers");
             Console.WriteLine("Please input an expression in following format:");
             Console.WriteLine("<number1> <operation> <number2>");
-            Console.WriteLine("(spaces are not necessary, but preferable for the sake of beauty and Universal balance).");
             Console.WriteLine("Allowed operations: + - * / ^ !");
             Console.WriteLine("note: factorial is a one-number operation, f.e. 123!)");
             Console.WriteLine($"{borderLine}");
@@ -19,7 +18,7 @@ namespace TwoNumbersCalculator
 
         static string CleanupString( string stringToClean )
         {
-            char[] allowedCharacters = ['+', '-', '*', '/', '^', '!', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'];
+            char[] allowedCharacters = ['+', '-', '*', '/', '^', '!', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ','];
                        
             for (int i = 0; i < stringToClean.Length; i++) //removing garbage
             {
@@ -39,57 +38,42 @@ namespace TwoNumbersCalculator
 
         static string[] SplitString(string stringToSplit, out char operationSymbol)
         {
-            string[] splitStringArray, splitStringArrayResult = {"", ""};
+            string[] splitStringArray;
             char[] allowedOperations = ['+', '-', '*', '/', '^', '!'];
-            int minusCount = 0;
+            bool startsWithMinus = false;
             int operationIndex = 0;
 
-            for (int i = 0;i < stringToSplit.Length; i++)
+            if (stringToSplit.StartsWith("-")) { //in case if first symbol is -
+                startsWithMinus = true;
+                stringToSplit = stringToSplit.Substring(1);
+            }
+            
+            for (int i = 0; i < stringToSplit.Length; i++)
             {
-                if (i == 0 && stringToSplit[i] == '-') { //don't count it as a detected operation
-                    minusCount++;
-                    continue;
-                }
-                
-                if (stringToSplit[i] == '-') minusCount++;
-
-                if (allowedOperations.Contains(stringToSplit[i])) {
+                if (allowedOperations.Contains(stringToSplit[i]))
+                {
                     operationIndex = i;
                     break;
                 }
 
             }
+
             operationSymbol = stringToSplit[operationIndex];
-            splitStringArray = stringToSplit.Split(stringToSplit[operationIndex]);
-            if (splitStringArray[0] == "" && splitStringArray.Length > 2) {//required for first string not to be empty
-                splitStringArray[0] = splitStringArray[1];
-                splitStringArray[1] = splitStringArray[2];
-            }
-            //if (stringToSplit[operationIndex]=='-' && splitStringArray[])
-            Console.WriteLine($"minusCount: {minusCount}");
-            
-            if (minusCount == 2) //corner case of multiple minuses, f.e. -2-5, -2--5
-            {
-                if (splitStringArray[1]== "" && splitStringArray[2] == "")
-                {
-                    splitStringArray[1] = splitStringArray[3];
-                }
-                splitStringArray[1] = "-" + splitStringArray[1];
-                splitStringArray[0] = "-" + splitStringArray[0];
+            splitStringArray = stringToSplit.Split(stringToSplit[operationIndex],2);
 
+            if ( startsWithMinus ) { splitStringArray[0] = "-" + splitStringArray[0]; } // if starts with minus
+            if (operationSymbol == '!' && splitStringArray[1] == "") { splitStringArray[1] = splitStringArray[0]; } // if factorial
 
-            }
-
-            splitStringArrayResult[0]= splitStringArray[0];
-            splitStringArrayResult[1] = splitStringArray[1];
-            return splitStringArrayResult;
+            return splitStringArray;
         }
 
+        //here goes main stuff-------------------------------------------------------------------------------------------
         static void Main(string[] args)
         {
        
             string inputString = "";
             string[] stringsArray;
+            double num1, num2;
             
             
             ShowInitialMenu();
@@ -99,15 +83,18 @@ namespace TwoNumbersCalculator
             if (inputString != "") {
                 
                 stringsArray = SplitString(inputString, out char operationSymbol);
-                Console.WriteLine($"ArrayLength: {stringsArray.Length}");
-                for (int i = 0; i<stringsArray.Length /*&& i<2*/; i++)
+
+                for (int i = 0; i<stringsArray.Length; i++)
                 {
-                    Console.WriteLine($"string[{i}]{stringsArray[i]}");
+                    Console.WriteLine($"string[{i}]: {stringsArray[i]}");
                     
                 }
                 Console.WriteLine($"Operation: {operationSymbol}");
-                //now check if each string is a number and call calculate functions
                 
+                //now check if each string is a number and call calculate functions
+                if (Double.TryParse(stringsArray[0], out num1) ) { Console.WriteLine($"number1={num1}"); }
+                if (Double.TryParse(stringsArray[1], out num2)) { Console.WriteLine($"number2={num2}"); }
+
 
             } else { Console.WriteLine("You entered an empty string"); }
         }   
