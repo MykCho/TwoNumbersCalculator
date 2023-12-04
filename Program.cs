@@ -101,7 +101,12 @@ namespace TwoNumbersCalculator
                     }
                     result = (a/b).ToString();
                     break;
-                
+
+                case '^':
+                    result = (Math.Pow(a, b)).ToString();
+                    break;
+                    
+
                 case '!':
                     if (a == 0)
                     {
